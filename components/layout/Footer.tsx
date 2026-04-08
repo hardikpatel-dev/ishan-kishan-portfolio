@@ -3,29 +3,9 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { FaInstagram, FaXTwitter, FaFacebook } from "react-icons/fa6";
 import { bio } from "@/lib/data/bio";
+import { BallIcon } from "@/components/brand/CricketIcons";
 import { Logo } from "@/components/brand/Logo";
 import { Tricolor } from "@/components/brand/Tricolor";
-
-/**
- * Footer — Lando-inspired editorial layout, adapted to the cricket theme.
- *
- * Structure (top → bottom)
- *   1. Section label      — "— 09  / GET IN TOUCH"
- *   2. Hero heading       — "Always bringing the fight" equivalent: "LET'S TALK CRICKET."
- *                           (white + italic saffron) centered
- *   3. Tricolor rule
- *   4. Supporting copy + big email CTA
- *   5. Two-column nav grid (PAGES | FOLLOW ON)  — centered under the heading
- *   6. Call-to-action pill button "BUSINESS ENQUIRIES ↗"
- *   7. Sponsors / teams marquee row (colours worn)
- *   8. Baseline wordmark "CONTACT" — clipped at bottom as a ghost flourish,
- *      positioned so it NEVER overlaps the content above it.
- *   9. Legal row (© + disclaimer)
- *
- * The overlapping `CONTACT` wordmark has been removed; instead a wordmark
- * sits OUTSIDE the content grid flow, at the very bottom, clipped by the
- * section boundary.
- */
 
 const NAV = [
   { href: "#top", label: "Home" },
@@ -46,6 +26,7 @@ export function Footer() {
     target: ref,
     offset: ["start end", "end end"],
   });
+  const wordSize = "clamp(4rem, 14vw, 22rem)";
 
   // Wordmark parallax — gently drifts as the footer enters view
   const wordX = useTransform(scrollYProgress, [0, 1], ["-4%", "4%"]);
@@ -63,7 +44,7 @@ export function Footer() {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[50rem] h-[50rem] rounded-full bg-saffron/[0.05] blur-3xl pointer-events-none"
       />
 
-      <div className="relative mx-auto max-w-9xl px-6 md:px-10 pt-24 sm:pt-32 md:pt-40 pb-8">
+      <div className="relative mx-auto max-w-9xl px-5 sm:px-6 md:px-10 pt-24 sm:pt-32 md:pt-40 pb-8">
         {/* ─── 1. Section label ────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -133,10 +114,10 @@ export function Footer() {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             href="mailto:hello@ishankishan.in"
             whileHover={{ scale: 1.02 }}
-            className="mt-8 group inline-flex items-center gap-3 sm:gap-5"
+            className="mt-8 group inline-flex max-w-full items-center gap-3 sm:gap-5"
           >
             <span
-              className="font-heavy uppercase text-white-soft group-hover:text-saffron transition-colors duration-500 leading-none tracking-tight"
+              className="font-heavy uppercase text-white-soft group-hover:text-saffron transition-colors duration-500 leading-none tracking-tight break-all text-center"
               style={{ fontSize: "clamp(1.2rem, 3vw, 2.4rem)" }}
             >
               hello@ishankishan.in
@@ -168,7 +149,7 @@ export function Footer() {
             hidden: {},
             visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
           }}
-          className="mt-16 sm:mt-24 grid grid-cols-2 gap-10 sm:gap-20 max-w-2xl mx-auto text-center"
+          className="mt-16 sm:mt-24 grid grid-cols-1 min-[420px]:grid-cols-2 gap-10 sm:gap-20 max-w-2xl mx-auto text-center"
         >
           {/* Pages */}
           <div>
@@ -256,7 +237,7 @@ export function Footer() {
             href="mailto:hello@ishankishan.in"
             whileHover={{ y: -3 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
-            className="group inline-flex items-center gap-4 px-7 py-4 sm:px-10 sm:py-5 rounded-full bg-saffron text-bg font-heavy uppercase tracking-[0.15em] text-xs sm:text-sm hover:bg-white-soft transition-colors duration-400"
+            className="group inline-flex w-full justify-center items-center gap-4 px-7 py-4 sm:w-auto sm:px-10 sm:py-5 rounded-full bg-saffron text-bg font-heavy uppercase tracking-[0.15em] text-xs sm:text-sm hover:bg-white-soft transition-colors duration-400"
           >
             Business enquiries
             <motion.span
@@ -297,7 +278,7 @@ export function Footer() {
           >
             Colours worn
           </motion.div>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-12 gap-y-3">
+          <div className="grid grid-cols-2 min-[540px]:flex min-[540px]:flex-wrap items-center justify-center gap-x-5 sm:gap-x-12 gap-y-3 sm:gap-y-4">
             {TEAMS.map((t) => (
               <motion.span
                 key={t}
@@ -306,7 +287,7 @@ export function Footer() {
                   visible: { opacity: 1, y: 0 },
                 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="font-heavy uppercase text-white-soft/55 hover:text-saffron transition-colors cursor-default text-xs sm:text-base tracking-wider whitespace-nowrap"
+                className="font-heavy uppercase text-white-soft/55 hover:text-saffron transition-colors cursor-default text-center text-[11px] sm:text-base tracking-wider whitespace-nowrap"
               >
                 {t}
               </motion.span>
@@ -320,7 +301,7 @@ export function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-14 sm:mt-20 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 pb-36 sm:pb-48 md:pb-56"
+          className="mt-14 sm:mt-20 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-8 sm:gap-6 pb-44 sm:pb-52 md:pb-56"
         >
           <div className="flex items-center gap-4">
             <span className="relative inline-flex">
@@ -337,13 +318,13 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:items-end items-center gap-2 text-center sm:text-right">
-            <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.3em] text-muted/70">
+          <div className="flex flex-col sm:items-end items-center gap-2 text-center sm:text-right max-w-md">
+            <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-3 gap-y-1 text-[10px] font-mono uppercase tracking-[0.3em] text-muted/70">
               <span>© {new Date().getFullYear()} Ishan Kishan</span>
               <span className="text-muted/40">·</span>
               <span>Portfolio concept</span>
             </div>
-            <div className="text-[9px] font-mono uppercase tracking-[0.25em] text-muted/50 max-w-md">
+            <div className="text-[9px] font-mono uppercase tracking-[0.22em] text-muted/50 max-w-[22rem] sm:max-w-md">
               Design project · not officially affiliated with Ishan Kishan,
               BCCI, or Mumbai Indians.
             </div>
@@ -351,23 +332,49 @@ export function Footer() {
         </motion.div>
       </div>
 
-      {/*
-        9. Baseline CONTACT wordmark — sits OUTSIDE the content flow at the
-        very bottom of the section, clipped by the section's overflow-hidden.
-        This gives the editorial flourish without overlapping content above
-        (the pb-48/pb-56 above reserves the vertical space for this to appear).
-      */}
       <motion.div
         aria-hidden
         style={{ x: wordX, opacity: wordOpacity }}
-        className="absolute inset-x-0 -bottom-6 sm:-bottom-10 md:-bottom-16 pointer-events-none select-none text-center leading-[0.78] tracking-[-0.04em]"
+        className="absolute -left-6 sm:-left-10 -bottom-1 sm:-bottom-4 md:-bottom-8 pointer-events-none select-none text-center leading-[0.78] tracking-[-0.04em]"
       >
-        <span
-          className="inline-block font-heavy uppercase text-white-soft/[0.05] whitespace-nowrap"
-          style={{ fontSize: "clamp(6rem, 22vw, 22rem)" }}
-        >
-          Contact
-        </span>
+        <div className="relative inline-flex max-w-full items-center whitespace-nowrap">
+          <motion.div
+            animate={{ scale: [0.96, 1.04, 0.96], rotate: [0, 16, 0] }}
+            transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute left-[11.5%] top-[8%] flex h-[0.72em] w-[0.72em] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white-soft/25 bg-gradient-to-br from-saffron/85 via-accent/80 to-mi-blue/80 text-white-soft/90 shadow-[0_0_28px_rgba(91,140,255,0.28)]"
+            style={{ fontSize: wordSize }}
+          >
+            <BallIcon size={18} className="opacity-80" />
+          </motion.div>
+
+          <span
+            className="absolute inset-x-[11%] bottom-[20%] h-[0.08em] rounded-full bg-gradient-to-r from-saffron/0 via-white-soft/75 to-india-green/70 blur-[2px]"
+            style={{ fontSize: wordSize }}
+          />
+          <span
+            className="absolute -left-[3%] top-[14%] h-[0.22em] w-[0.22em] rounded-full bg-saffron/85 blur-[2px]"
+            style={{ fontSize: wordSize }}
+          />
+          <span
+            className="absolute right-[6%] top-[10%] h-[0.18em] w-[0.18em] rounded-full bg-accent/85 blur-[2px]"
+            style={{ fontSize: wordSize }}
+          />
+
+          <span
+            className="inline-block font-heavy uppercase whitespace-nowrap"
+            style={{ fontSize: wordSize }}
+          >
+            <span className="text-white-soft/[0.18]">P</span>
+            <span className="text-white-soft/[0.18]">O</span>
+            <span className="text-white-soft/[0.18]">W</span>
+            <span className="text-white-soft/[0.18]">E</span>
+            <span className="text-white-soft/[0.18]">R</span>
+            <span className="text-white-soft/[0.18]">P</span>
+            <span className="text-white-soft/[0.18]">L</span>
+            <span className="text-white-soft/[0.18]">A</span>
+            <span className="text-white-soft/[0.18]">Y</span>
+          </span>
+        </div>
       </motion.div>
     </footer>
   );

@@ -138,16 +138,20 @@ function Chapter({
       className="relative"
     >
       {/* Center marker on the spine */}
-      <motion.div
+      <div
         aria-hidden
-        initial={{ scale: 0, rotate: -45 }}
-        whileInView={{ scale: 1, rotate: 0 }}
-        viewport={{ once: true, margin: "-120px" }}
-        transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-bg border-2 border-saffron items-center justify-center hidden md:flex"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden md:flex"
       >
-        <BallIcon size={16} className="text-saffron" />
-      </motion.div>
+        <motion.div
+          initial={{ scale: 0, rotate: -45 }}
+          whileInView={{ scale: 1, rotate: 0 }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="w-10 h-10 rounded-full bg-bg border-2 border-saffron items-center justify-center flex"
+        >
+          <BallIcon size={16} className="text-saffron" />
+        </motion.div>
+      </div>
 
       {/* HUGE background year number */}
       <motion.div

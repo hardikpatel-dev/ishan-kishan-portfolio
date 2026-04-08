@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#05070f" />
+  <text
+    x="16"
+    y="20"
+    fill="#eaf0ff"
+    font-family="Georgia, serif"
+    font-size="18"
+    font-weight="700"
+    letter-spacing="-1"
+    text-anchor="middle"
+  >
+    <tspan fill="#ff9933">I</tspan>K
+  </text>
+</svg>

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:/Users/Aabhyasa Server/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh\" --project-dir \"f:/Hardik/tools/cricket\")",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(node -p \"require\\('./package.json'\\).dependencies['framer-motion']\")",
+      "Bash(node -p \"JSON.stringify\\({react: require\\('./package.json'\\).dependencies.react, reactDom: require\\('./package.json'\\).dependencies['react-dom'], types: require\\('./package.json'\\).devDependencies && require\\('./package.json'\\).devDependencies['@types/react']}\\)\")",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies.clsx || require\\('./package.json'\\).devDependencies?.clsx || 'NOT FOUND'\\)\")",
+      "WebFetch(domain:www.vaultbyviratkohli.com)",
+      "Bash(cmd //c \"rmdir /s /q .next\")",
+      "Bash(cmd //c \"taskkill /f /im node.exe\")",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(rm -rf .next)",
+      "Bash(rm -rf .next node_modules/.cache)",
+      "Bash(npm ls:*)",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "WebFetch(domain:framer.com)",
+      "WebFetch(domain:framerusercontent.com)",
+      "Bash(file public/hero/*.png)",
+      "Bash(node -e \"const{execSync}=require\\('child_process'\\);['public/hero/helmet.png','public/hero/portrait.png'].forEach\\(f=>{const b=require\\('fs'\\).readFileSync\\(f\\);const w=b.readUInt32BE\\(16\\);const h=b.readUInt32BE\\(20\\);console.log\\(f,w+'x'+h\\);}\\);\")"
+    ]
+  }
+}

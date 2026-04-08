@@ -69,7 +69,7 @@ export function Journey() {
       </div>
 
       {/* Spine — vertical scroll-progress line */}
-      <div className="relative mx-auto max-w-7xl px-6">
+      <div className="relative mx-auto max-w-9xl px-6">
         <div
           aria-hidden
           className="absolute left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2 hidden md:block"

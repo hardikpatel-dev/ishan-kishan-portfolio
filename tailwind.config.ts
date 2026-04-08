@@ -25,6 +25,10 @@ const config: Config = {
         mono: ["var(--font-jetbrains)", "monospace"],
         heavy: ["var(--font-archivo-black)", "Impact", "sans-serif"],
       },
+      maxWidth: {
+        "8xl": "88rem",
+        "9xl": "96rem",
+      },
     },
   },
   plugins: [],

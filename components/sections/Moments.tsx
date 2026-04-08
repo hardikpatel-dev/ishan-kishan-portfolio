@@ -73,7 +73,7 @@ export function Moments() {
       )}
 
       {/* HEADER */}
-      <div className="relative mx-auto max-w-7xl px-6 mb-16 md:mb-24">
+      <div className="relative mx-auto max-w-9xl px-6 mb-16 md:mb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -106,7 +106,26 @@ export function Moments() {
       </div>
 
       {/* HERO MOMENT — featured large card */}
-      <div className="relative mx-auto max-w-7xl px-6">
+      <div className="relative mx-auto max-w-9xl px-6">
+        {/*
+          Big background year — now anchored to the LEFT edge behind the image
+          column only, and pushed BELOW content stack (-z-10). This way the
+          content column (with stat row) is never overlapped by the giant
+          number. Vertical parallax kept for editorial feel.
+        */}
+        <motion.div
+          aria-hidden
+          style={{ y: headlineY }}
+          className="absolute left-0 right-0 top-1/2 -translate-y-1/2 -z-10 pointer-events-none select-none font-heavy uppercase leading-none tracking-[-0.04em] text-center"
+        >
+          <span
+            className="inline-block text-white-soft/[0.035]"
+            style={{ fontSize: "clamp(7rem, 20vw, 20rem)" }}
+          >
+            {hero.date.slice(0, 4)}
+          </span>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -114,17 +133,6 @@ export function Moments() {
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           className="relative grid md:grid-cols-12 gap-6 md:gap-10 items-stretch"
         >
-          {/* Big background year */}
-          <motion.div
-            aria-hidden
-            style={{ y: headlineY }}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 pointer-events-none select-none font-heavy uppercase text-white-soft/[0.05] leading-none tracking-[-0.04em]"
-          >
-            <span style={{ fontSize: "clamp(8rem, 22vw, 22rem)" }}>
-              {hero.date.slice(0, 4)}
-            </span>
-          </motion.div>
-
           {/* Image */}
           <div className="relative md:col-span-7 aspect-[4/3] md:aspect-[5/4] overflow-hidden border border-border group">
             <Image
@@ -158,45 +166,82 @@ export function Moments() {
             </div>
           </div>
 
-          {/* Content */}
-          <div className="md:col-span-5 flex flex-col justify-center">
-            <h3
+          {/* Content — with staggered children for editorial motion feel */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+            }}
+            className="md:col-span-5 flex flex-col justify-center relative"
+          >
+            <motion.h3
+              variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="font-heavy uppercase text-saffron leading-[0.85] tracking-tight"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}
             >
               210<span className="text-white-soft">*</span>
-            </h3>
-            <div className="mt-4 font-display text-2xl md:text-3xl text-text leading-tight">
-              {hero.headline}
-            </div>
+            </motion.h3>
+
             <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-4 font-display text-2xl md:text-3xl text-text leading-tight"
+            >
+              {hero.headline}
+            </motion.div>
+
+            <motion.div
+              variants={{ hidden: { scaleX: 0 }, visible: { scaleX: 1 } }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               style={{ transformOrigin: "left" }}
               className="mt-6 h-[2px] w-32 bg-gradient-to-r from-saffron via-white-soft to-india-green"
             />
-            <p className="text-muted mt-6 leading-relaxed max-w-md">
+
+            <motion.p
+              variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="text-muted mt-6 leading-relaxed max-w-md"
+            >
               {hero.description}
-            </p>
-            <div className="mt-8 grid grid-cols-3 gap-4 max-w-sm">
+            </motion.p>
+
+            {/*
+              Stat row — wrapped in a solid bg container so any faint bg
+              bleed-through from the giant year number is blocked. Stats
+              stay crisp and readable.
+            */}
+            <motion.div
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
+              }}
+              className="mt-8 grid grid-cols-3 gap-4 max-w-sm relative bg-bg/80 backdrop-blur-sm p-4 border-l-2 border-saffron/60"
+            >
               {[
                 { label: "Balls", value: "131" },
                 { label: "Fours", value: "24" },
                 { label: "Sixes", value: "10" },
               ].map((s) => (
-                <div key={s.label} className="border-l border-saffron/40 pl-3">
+                <motion.div
+                  key={s.label}
+                  variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="pl-2"
+                >
                   <div className="text-[9px] font-mono uppercase tracking-[0.25em] text-muted">
                     {s.label}
                   </div>
                   <div className="font-heavy text-2xl text-white-soft mt-1">
                     {s.value}
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </motion.div>
 
         {/* REST OF MOMENTS — staggered grid */}

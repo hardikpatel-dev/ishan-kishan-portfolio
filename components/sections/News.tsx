@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { news } from "@/lib/data/news";
 import { AnimatedBg } from "@/components/ui/AnimatedBg";
 import { Tricolor } from "@/components/brand/Tricolor";
@@ -8,18 +9,46 @@ import { Tricolor } from "@/components/brand/Tricolor";
 /**
  * News — bold editorial press cards.
  *
- * - Big mixed-size grid: first card is featured (large), rest are smaller
- * - Big background "PRESS" wordmark
- * - Each card has source, date, headline, animated arrow on hover
+ * Layout
+ *   - Header: stacked on mobile/tablet, 2-col on lg+. Bg "PRESS" wordmark
+ *     sits ONLY in the header band (top area), never over card content.
+ *   - Featured: asymmetric 7/5 grid on md+, stacked on mobile. Image gets
+ *     scroll-driven parallax. Text column staggers in line-by-line.
+ *   - Rest grid: 1 col mobile → 2 col sm → 3 col lg. Spring hover lift.
+ *
+ * Motion
+ *   - Header: parallax translate on the bg wordmark as section scrolls
+ *   - Featured image: subtle scale + y parallax
+ *   - Text content: stagger children with custom variants
+ *   - Divider rules: scaleX draw-in
+ *   - Grid cards: stagger entrance + spring hover
  */
 export function News() {
   const featured = news[0];
   const rest = news.slice(1);
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Background PRESS wordmark parallax — drifts as the section scrolls past
+  const bgWordX = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const bgWordOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0, 1, 1, 0],
+  );
+
+  // Featured image parallax
+  const imgY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
   return (
     <section
+      ref={sectionRef}
       id="news"
-      className="relative py-32 md:py-48 bg-bg overflow-hidden"
+      className="relative py-28 sm:py-32 md:py-48 bg-bg overflow-hidden"
     >
       <AnimatedBg
         blobs={[
@@ -47,114 +76,229 @@ export function News() {
         ]}
       />
 
-      {/* Background "PRESS" wordmark */}
-      <div
+      {/*
+        Background "PRESS" wordmark — anchored to the header band but pushed
+        BEHIND all content (-z-10) and rendered with a very subtle outline
+        style (stroke, no fill) at ultra-low opacity. This way the heading
+        "Stories from the record" stays fully readable and the wordmark reads
+        as a textural ghost rather than competing text.
+      */}
+      <motion.div
         aria-hidden
-        className="absolute inset-x-0 top-1/2 -translate-y-1/2 pointer-events-none select-none text-center font-heavy uppercase text-white-soft/[0.03] leading-none tracking-[-0.04em] whitespace-nowrap"
+        style={{ x: bgWordX, opacity: bgWordOpacity }}
+        className="absolute inset-x-0 top-20 sm:top-24 md:top-32 -z-10 pointer-events-none select-none text-center font-heavy uppercase leading-[0.8] tracking-[-0.04em]"
       >
-        <span style={{ fontSize: "clamp(10rem, 28vw, 28rem)" }}>Press</span>
-      </div>
+        <span
+          className="inline-block text-white-soft/[0.015]"
+          style={{ fontSize: "clamp(5rem, 14vw, 18rem)" }}
+        >
+          Press
+        </span>
+      </motion.div>
 
-      <div className="relative mx-auto max-w-7xl px-6">
-        {/* HEADER */}
+      <div className="relative mx-auto max-w-9xl px-5 sm:px-6 lg:px-8">
+        {/* ─── HEADER ────────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-16 md:mb-24 grid md:grid-cols-2 gap-8 items-end"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.12 } },
+          }}
+          className="mb-14 sm:mb-20 lg:mb-28 grid lg:grid-cols-[1fr_auto] gap-6 sm:gap-10 items-end"
         >
           <div>
-            <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-[0.3em] text-muted mb-3">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-[0.3em] text-muted mb-3"
+            >
               <span className="text-muted">— 08</span>
               <span className="text-saffron">In the news</span>
-            </div>
-            <h2
+            </motion.div>
+
+            <motion.h2
+              variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="font-heavy uppercase text-white-soft leading-[0.88] tracking-tight"
-              style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)" }}
+              style={{ fontSize: "clamp(2.4rem, 7vw, 6.5rem)" }}
             >
               Stories
               <br />
               from <span className="text-saffron italic">the record.</span>
-            </h2>
-            <Tricolor className="mt-6" />
+            </motion.h2>
+
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                visible: { opacity: 1, scaleX: 1 },
+              }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transformOrigin: "left" }}
+            >
+              <Tricolor className="mt-6" />
+            </motion.div>
           </div>
-          <p className="text-muted leading-relaxed max-w-sm font-mono text-sm md:justify-self-end md:text-right">
+
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="text-muted leading-relaxed max-w-sm font-mono text-xs sm:text-sm lg:text-right lg:justify-self-end"
+          >
             A few highlights from press coverage worth holding onto.
-          </p>
+          </motion.p>
         </motion.div>
 
-        {/* FEATURED article */}
+        {/* ─── FEATURED ARTICLE ──────────────────────────────────────── */}
         <motion.a
           href={featured.url}
           target="_blank"
           rel="noreferrer"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          aria-label={`${featured.headline} — opens ${featured.source} in new tab`}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="group relative grid md:grid-cols-12 gap-8 mb-16 md:mb-20"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+          }}
+          className="group relative grid md:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 mb-16 sm:mb-20 lg:mb-24"
         >
-          <div className="md:col-span-7 relative aspect-[16/10] overflow-hidden border border-border group-hover:border-saffron/50 transition-colors">
-            <Image
-              src={featured.thumbnail}
-              alt={featured.headline}
-              fill
-              className="object-cover transition-transform duration-1000 group-hover:scale-105"
-              sizes="(min-width: 768px) 60vw, 100vw"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
+          {/* Image — parallax + scale on hover */}
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 50 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            className="md:col-span-7 relative aspect-[16/10] overflow-hidden border border-border group-hover:border-saffron/60 transition-colors duration-500"
+          >
+            <motion.div
+              style={{ y: imgY }}
+              className="absolute inset-0 scale-110"
+            >
+              <Image
+                src={featured.thumbnail}
+                alt={featured.headline}
+                fill
+                className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                sizes="(min-width: 768px) 60vw, 100vw"
+                unoptimized
+              />
+            </motion.div>
+            {/* Gradient veil — darker bottom-left for label legibility */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-bg/90 via-bg/30 to-transparent pointer-events-none" />
+            {/* Featured badge */}
             <div className="absolute top-4 left-4 bg-bg/85 backdrop-blur-sm border border-saffron/40 px-3 py-1.5 rounded-sm">
-              <div className="text-[9px] font-mono uppercase tracking-[0.3em] text-saffron">
-                ★ Featured
+              <div className="flex items-center gap-2 text-[9px] font-mono uppercase tracking-[0.3em] text-saffron">
+                <svg
+                  width="8"
+                  height="8"
+                  viewBox="0 0 10 10"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path d="M5 0l1.2 3.7H10L6.9 6l1.2 3.7L5 7.4 1.9 9.7 3.1 6 0 3.7h3.8z" />
+                </svg>
+                Featured
               </div>
             </div>
-          </div>
+            {/* Bottom-left external link indicator */}
+            <motion.div
+              className="absolute bottom-4 right-4 w-10 h-10 rounded-full border border-saffron/50 bg-bg/70 backdrop-blur-sm flex items-center justify-center text-saffron opacity-0 group-hover:opacity-100"
+              initial={false}
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+                <path
+                  d="M3 11L11 3M11 3H5M11 3V9"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </motion.div>
+          </motion.div>
 
-          <div className="md:col-span-5 flex flex-col justify-center">
-            <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.3em] mb-4">
+          {/* Text column — stagger children, solid readability */}
+          <div className="md:col-span-5 flex flex-col justify-center relative">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.3em] mb-4"
+            >
               <span className="text-muted">{featured.date}</span>
               <span className="w-6 h-px bg-saffron/40" />
               <span className="text-saffron">{featured.source}</span>
-            </div>
-            <h3
-              className="font-heavy uppercase text-white-soft leading-[0.92] tracking-tight"
-              style={{ fontSize: "clamp(1.8rem, 3.5vw, 3rem)" }}
+            </motion.div>
+
+            <motion.h3
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="font-heavy uppercase text-white-soft leading-[0.95] tracking-tight"
+              style={{ fontSize: "clamp(1.5rem, 3.2vw, 2.75rem)" }}
             >
               {featured.headline}
-            </h3>
+            </motion.h3>
+
             <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.3 }}
+              variants={{
+                hidden: { scaleX: 0 },
+                visible: { scaleX: 1 },
+              }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               style={{ transformOrigin: "left" }}
               className="mt-6 h-[2px] w-32 bg-gradient-to-r from-saffron via-white-soft to-india-green"
             />
-            <div className="mt-6 flex items-center gap-3 text-xs font-mono uppercase tracking-[0.3em] text-muted group-hover:text-saffron transition-colors">
+
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: -10 },
+                visible: { opacity: 1, x: 0 },
+              }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-6 flex items-center gap-3 text-xs font-mono uppercase tracking-[0.3em] text-muted group-hover:text-saffron transition-colors"
+            >
               Read full story
               <motion.span
                 className="inline-block"
-                animate={{ x: [0, 4, 0] }}
+                animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
               >
                 →
               </motion.span>
-            </div>
+            </motion.div>
           </div>
         </motion.a>
 
-        {/* REST grid */}
+        {/* ─── REST GRID ─────────────────────────────────────────────── */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: 0.1 } },
+            visible: { transition: { staggerChildren: 0.12 } },
           }}
-          className="grid md:grid-cols-3 gap-6 md:gap-8"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
         >
           {rest.map((n, i) => (
             <motion.a
@@ -162,40 +306,89 @@ export function News() {
               href={n.url}
               target="_blank"
               rel="noreferrer"
+              aria-label={`${n.headline} — opens ${n.source} in new tab`}
               variants={{
-                hidden: { opacity: 0, y: 40 },
+                hidden: { opacity: 0, y: 50 },
                 visible: { opacity: 1, y: 0 },
               }}
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 350, damping: 28 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              whileHover="hovered"
               className="group block"
             >
-              <div className="relative aspect-[4/3] overflow-hidden border border-border group-hover:border-saffron/50 transition-colors">
-                <Image
-                  src={n.thumbnail}
-                  alt={n.headline}
-                  fill
-                  className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                  sizes="(min-width: 768px) 30vw, 90vw"
-                  unoptimized
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent" />
+              <motion.div
+                variants={{
+                  hovered: { y: -8 },
+                }}
+                transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                className="relative aspect-[4/3] overflow-hidden border border-border group-hover:border-saffron/60 transition-colors duration-500"
+              >
+                <motion.div
+                  variants={{
+                    hovered: { scale: 1.08 },
+                  }}
+                  transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={n.thumbnail}
+                    alt={n.headline}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                    unoptimized
+                  />
+                </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-t from-bg/85 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute top-3 left-3 text-[9px] font-mono uppercase tracking-[0.3em] text-saffron">
-                  0{i + 2} / 0{news.length}
+                  {String(i + 2).padStart(2, "0")} / {String(news.length).padStart(2, "0")}
                 </div>
-              </div>
+                {/* Hover arrow corner */}
+                <motion.div
+                  variants={{
+                    hovered: { opacity: 1, x: 0, y: 0 },
+                  }}
+                  initial={{ opacity: 0, x: 10, y: -10 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full border border-saffron/50 bg-bg/70 backdrop-blur-sm flex items-center justify-center text-saffron"
+                >
+                  <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden>
+                    <path
+                      d="M3 11L11 3M11 3H5M11 3V9"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </motion.div>
+              </motion.div>
+
               <div className="mt-4">
                 <div className="flex items-center gap-3 text-[9px] font-mono uppercase tracking-[0.3em]">
                   <span className="text-muted">{n.date}</span>
                   <span className="w-4 h-px bg-saffron/40" />
                   <span className="text-saffron">{n.source}</span>
                 </div>
-                <h4 className="font-heavy uppercase text-white-soft mt-3 text-base leading-snug tracking-tight group-hover:text-saffron transition-colors">
+                <h4 className="font-heavy uppercase text-white-soft mt-3 text-sm sm:text-base leading-snug tracking-tight group-hover:text-saffron transition-colors duration-300">
                   {n.headline}
                 </h4>
-                <div className="mt-4 flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.3em] text-muted group-hover:text-saffron transition-colors">
+                {/* Animated underline on hover */}
+                <motion.div
+                  variants={{
+                    hovered: { scaleX: 1 },
+                  }}
+                  initial={{ scaleX: 0 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ transformOrigin: "left" }}
+                  className="mt-3 h-px w-full bg-gradient-to-r from-saffron via-white-soft/60 to-transparent"
+                />
+                <div className="mt-3 flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.3em] text-muted group-hover:text-saffron transition-colors">
                   Read
-                  <motion.span className="inline-block" animate={{ x: 0 }} whileHover={{ x: 4 }}>
+                  <motion.span
+                    className="inline-block"
+                    variants={{ hovered: { x: 4 } }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  >
                     →
                   </motion.span>
                 </div>

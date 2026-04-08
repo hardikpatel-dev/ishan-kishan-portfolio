@@ -74,7 +74,7 @@ export function Gallery() {
 
         {/* Top header row */}
         <div className="relative pt-32 md:pt-36 pb-6 px-6 md:px-12">
-          <div className="flex items-end justify-between gap-8 max-w-7xl mx-auto">
+          <div className="flex items-end justify-between gap-8 max-w-9xl mx-auto">
             <div className="max-w-2xl">
               <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-[0.3em] text-muted mb-3">
                 <span className="font-mono text-xs text-muted">— 07</span>
@@ -134,7 +134,7 @@ export function Gallery() {
 
         {/* Bottom drag/scroll hint */}
         <div className="relative px-6 md:px-12 pb-8">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-8 text-[10px] font-mono uppercase tracking-[0.3em] text-muted">
+          <div className="max-w-9xl mx-auto flex items-center justify-between gap-8 text-[10px] font-mono uppercase tracking-[0.3em] text-muted">
             <div className="flex items-center gap-3">
               <motion.span
                 animate={{ x: [0, 6, 0] }}
@@ -153,7 +153,7 @@ export function Gallery() {
             <div>Click any frame to open</div>
           </div>
           {/* Track progress bar */}
-          <div className="max-w-7xl mx-auto mt-4 h-[2px] bg-border overflow-hidden">
+          <div className="max-w-9xl mx-auto mt-4 h-[2px] bg-border overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-saffron via-accent to-india-green origin-left"
               style={{ scaleX: scrollYProgress }}

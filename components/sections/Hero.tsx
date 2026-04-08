@@ -308,7 +308,7 @@ export function Hero() {
         transition={{ duration: 1, delay: 1.7 }}
         className="absolute bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-bg/80 backdrop-blur-md"
       >
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-6">
+        <div className="mx-auto max-w-9xl px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-6">
           <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-muted shrink-0 hidden md:block">
             Colours worn
           </div>

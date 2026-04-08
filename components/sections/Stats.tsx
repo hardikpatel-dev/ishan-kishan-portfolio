@@ -50,7 +50,7 @@ export function Stats() {
         ]}
       />
 
-      <div className="relative mx-auto max-w-7xl px-6">
+      <div className="relative mx-auto max-w-9xl px-6">
         <SectionHeading
           number="04"
           eyebrow="Career stats"
@@ -283,15 +283,21 @@ function SignatureHighlight() {
       transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
       className="mt-20 md:mt-24 relative overflow-hidden border border-saffron/30 bg-gradient-to-br from-saffron/[0.08] via-bg to-mi-blue/[0.08] p-8 md:p-12"
     >
-      {/* Background big number */}
+      {/*
+        Background "210" ghost number — anchored to the middle-right area
+        but clamped to never collide with the strike rate stat column.
+        Explicit -z-10 + -right offset keeps it strictly behind the content
+        grid, and a lower opacity turns it into a textural ghost instead of
+        competing text.
+      */}
       <div
         aria-hidden
-        className="absolute -right-6 -bottom-10 font-heavy text-saffron/[0.08] leading-none tracking-[-0.04em] pointer-events-none select-none"
-        style={{ fontSize: "clamp(10rem, 22vw, 22rem)" }}
+        className="absolute right-[6%] top-1/2 -translate-y-1/2 md:right-[18%] font-heavy text-saffron/[0.04] leading-none tracking-[-0.04em] pointer-events-none select-none -z-10"
+        style={{ fontSize: "clamp(6rem, 13vw, 13rem)" }}
       >
         210
       </div>
-      <div className="relative grid md:grid-cols-[auto,1fr,auto] gap-6 md:gap-12 items-center">
+      <div className="relative z-10 grid md:grid-cols-[auto,1fr,auto] gap-6 md:gap-12 items-center">
         <motion.div
           initial={{ scale: 0, rotate: -45 }}
           whileInView={{ scale: 1, rotate: 0 }}
@@ -318,13 +324,15 @@ function SignatureHighlight() {
             Chattogram, 2022
           </p>
         </div>
-        <div className="hidden md:flex flex-col items-end gap-3 shrink-0">
+        <div className="hidden md:flex flex-col items-end gap-3 shrink-0 relative bg-bg/60 backdrop-blur-sm pl-6 pr-2 py-2 border-l border-saffron/40">
           <BallIcon size={32} className="text-saffron/70" />
           <div className="text-right">
             <div className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted">
               Strike Rate
             </div>
-            <div className="font-heavy text-white-soft text-3xl">160.30</div>
+            <div className="font-heavy text-white-soft text-3xl leading-none">
+              160.30
+            </div>
           </div>
         </div>
       </div>
